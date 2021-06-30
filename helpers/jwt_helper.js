@@ -3,6 +3,11 @@ const createError = require('http-errors')
 const { token } = require('morgan')
 
 module.exports = {
+    /**
+     * 
+     * @param {number} userId 
+     * @returns {string} token
+     */
     signAccessToken: (userId) =>{
         return new Promise((resolve, reject) =>{
             const payload ={}
@@ -18,10 +23,19 @@ module.exports = {
                 reject(createError.InternalServerError())
 
                 }
-                resolve(token)
+                resolve(token) 
             })
         })
     },
+
+    
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {nextFunction} next 
+     * @returns {object} payload
+     */
     verifyAccessToken: (req,res,next)=>{
         if(!req.headers['authorization']) return next(createError.Unauthorized())
         const authHeader = req.headers['authorization']
@@ -36,6 +50,12 @@ module.exports = {
             next()
         })
     },
+
+    /**
+     * 
+     * @param {number} userId 
+     * @returns {string} token
+     */
     signRefreshToken:(userId) =>{
         return new Promise((resolve, reject) =>{
             const payload ={}
@@ -55,6 +75,12 @@ module.exports = {
             })
         })
     },
+
+    /**
+     * 
+     * @param {string} refreshToken 
+     * @returns {number} userId
+     */
     verifyRefreshToken: (refreshToken)=>{
         return new Promise((resolve,reject) =>{
             JWT.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,payload)=>{
