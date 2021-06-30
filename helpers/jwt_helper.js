@@ -30,7 +30,8 @@ module.exports = {
         //const token = authHeader
         JWT.verify(token, process.env.ACCESS_TOKEN_SECRET,(err,payload) =>{
             if(err){
-                return next(createError.Unauthorized())
+                const message = err.name === 'jsonWebTokenError' ? 'Unauthorized' : err.message
+                return next(createError.Unauthorized(message))
             }
             req.payload = payload
             next()
