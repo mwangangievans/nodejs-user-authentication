@@ -20,13 +20,22 @@ router.post('/register',async(req,res,next)=>{
    } catch (error) {
        if(error.isJoi === true) error.status = 422
        next(error)
-       
-   }
-   
+   }  
 })
-
 router.post('/login',async(req,res,next)=>{
-    res.send('login route')
+   try {
+       const result = await  authSchema.validateAsync(req.body)
+       const user = await User.findOne({email:result.email})
+       if(!user) throw createHttpError.NotFound('User not registered')
+ const isMatch = await user.isValidPassword(result.password)
+ if(!isMatch) throw createHttpError.Unauthorized('Username/Password not valid')
+ const accessToken = await signAccessToken(user.id)
+       res.send({accessToken})
+   } catch (error) {
+       if(error.isJoi === true)
+       return next(createHttpError.BadRequest('invalid Username/Password'))
+       next(error)
+   }
 })
 
 router.post('/refresh-token',async(req,res,next)=>{
