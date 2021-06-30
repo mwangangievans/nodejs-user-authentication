@@ -2,9 +2,9 @@ const mongoose =require('mongoose');
 
 
 
-    mongoose.connect('',
+    mongoose.connect('mongodb://localhost:27017',
     {
-        dbName:'',
+        dbName:'auth',
         useNewUrlParser: true,
         useUnifiedTopology:true,
         useFindAndModify: false,
