@@ -1,4 +1,7 @@
-GET http://localhost:3000/dfghjk
+GET http://localhost:3000/
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MjUwNTMyNDksImV4cCI6MTYyNTA1Njg0OSwiYXVkIjoiNjBkYzU4NDA0NjI4MWQwMjQwNDhmNjhiIiwiaXNzIjoiZXZhbnMuY29tIn0.ZYqXSVqEtB3xDSLG4c3AAbbsuYDUx1WyQvfYOGJM1xQ
+
+
 
 ###
 POST  http://localhost:3000/register
