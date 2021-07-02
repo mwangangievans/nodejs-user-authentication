@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken')
 const createError = require('http-errors')
 const { token } = require('morgan')
+const client = require('./init_redis')
 
 module.exports = {
     /**
@@ -13,7 +14,7 @@ module.exports = {
             const payload ={}
             const secret = process.env.ACCESS_TOKEN_SECRET
             const options = {
-                expiresIn: '1h',
+                expiresIn: '50s',
                 issuer:'evans.com',
                 audience:userId,
             }
@@ -21,9 +22,15 @@ module.exports = {
                 if(err) {
                 console.log(err.message)
                 reject(createError.InternalServerError())
-
+                }
+                client.SET(userId, token, 'EX', 50 , (err,reply)=>{
+                    if(err){
+                    console.log(err.message)
+                    reject(createError.InternalServerError())
+                    return
                 }
                 resolve(token) 
+                })
             })
         })
     },
@@ -86,7 +93,16 @@ module.exports = {
             JWT.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,payload)=>{
                 if(err) return reject(createError.Unauthorized())
                 const userId = payload.aud
-                resolve(userId)
+                client.GET(userId, (err,result)=>{
+                    if(err){
+                        console.log(err.message)
+                        reject(createError.InternalServerError())
+                        return
+                    }
+                    if(refreshToken === result) return resolve(userId)
+                    reject(createError.Unauthorized())
+                })
+               
             })
         })
     }
